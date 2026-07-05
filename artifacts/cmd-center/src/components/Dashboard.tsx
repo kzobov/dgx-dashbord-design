@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
 import { config, Service, TailnetDevice, SystemStats } from '../config';
@@ -66,9 +66,31 @@ function ServiceCard({ service }: { service: Service }) {
   );
 }
 
+function CopyButton({ value, 'data-testid': testId }: { value: string; 'data-testid'?: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [value]);
+  return (
+    <button
+      onClick={handleCopy}
+      data-testid={testId}
+      className="ml-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[rgba(255,255,255,0.4)] hover:text-[#00e5c3] focus:outline-none"
+      title={`Copy ${value}`}
+    >
+      {copied
+        ? <Check size={11} className="text-[#00e5c3]" />
+        : <Copy size={11} />}
+    </button>
+  );
+}
+
 function TailnetCard({ device }: { device: TailnetDevice }) {
   const isConnected = device.status === 'connected';
-  
+
   return (
     <div className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)]">
       <div className="flex justify-between items-center mb-2">
@@ -80,11 +102,18 @@ function TailnetCard({ device }: { device: TailnetDevice }) {
           {device.os} {device.version}
         </div>
       </div>
-      <div className="text-[11px] font-mono text-[rgba(255,255,255,0.45)] space-y-1 mt-1">
-        <div className="truncate text-[rgba(255,255,255,0.6)]">{device.magicDns}</div>
-        <div className="flex gap-3">
-          <span>{device.ipv4}</span>
-          <span className="opacity-50">{device.ipv6.slice(0, 15)}...</span>
+      <div className="text-[11px] font-mono text-[rgba(255,255,255,0.45)] space-y-1.5 mt-1">
+        <div className="group flex items-center gap-1 min-w-0">
+          <span className="truncate text-[rgba(255,255,255,0.6)]">{device.magicDns}</span>
+          <CopyButton value={device.magicDns} data-testid={`copy-magicdns-${device.hostname}`} />
+        </div>
+        <div className="group flex items-center gap-1">
+          <span className="text-[rgba(255,255,255,0.55)]">{device.ipv4}</span>
+          <CopyButton value={device.ipv4} data-testid={`copy-ipv4-${device.hostname}`} />
+        </div>
+        <div className="group flex items-center gap-1 min-w-0">
+          <span className="truncate text-[rgba(255,255,255,0.35)]">{device.ipv6}</span>
+          <CopyButton value={device.ipv6} data-testid={`copy-ipv6-${device.hostname}`} />
         </div>
       </div>
     </div>
