@@ -3,6 +3,7 @@ import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
 import { config, Service, TailnetDevice, ScheduledTask } from '../config';
+import { TerminalModal } from './TerminalModal';
 
 const iconMap: Record<string, React.ElementType> = {
   Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard,
@@ -382,6 +383,7 @@ function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
 export default function Dashboard() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [masked, setMasked] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
 
   const handleRefresh = useCallback(() => {
     setLastRefreshed(new Date());
@@ -435,16 +437,19 @@ export default function Dashboard() {
               <span className="hidden sm:inline">DGX Dashboard</span>
               <ExternalLink size={11} className="hidden sm:inline" />
             </a>
-            <a
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="link-terminal"
-              className="p-1.5 text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)] rounded-md transition-all"
+            <button
+              onClick={() => setTerminalOpen(true)}
+              data-testid="button-terminal"
+              aria-pressed={terminalOpen}
+              className={`p-1.5 rounded-md border transition-all ${
+                terminalOpen
+                  ? 'text-[#00e5c3] bg-[rgba(0,229,195,0.1)] border-[rgba(0,229,195,0.35)] shadow-[0_0_8px_rgba(0,229,195,0.2)]'
+                  : 'text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)]'
+              }`}
               title="Terminal"
             >
               <Terminal size={14} />
-            </a>
+            </button>
             <button
               onClick={() => setMasked((m) => !m)}
               data-testid="button-mask-hosts"
@@ -512,6 +517,8 @@ export default function Dashboard() {
           </div>
         </footer>
       </div>
+
+      <TerminalModal open={terminalOpen} onClose={() => setTerminalOpen(false)} />
     </div>
     </MaskContext.Provider>
   );
