@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react';
-import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight } from 'lucide-react';
+import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight, Pause, Zap, Trash2 } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
-import { config, Service, TailnetDevice, SystemStats } from '../config';
+import { config, Service, TailnetDevice, ScheduledTask } from '../config';
 
 const iconMap: Record<string, React.ElementType> = {
   Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard,
@@ -197,6 +197,57 @@ function StatBar({ value, max, label }: { value: number, max: number, label: str
   );
 }
 
+function ScheduledTaskRow({ task }: { task: ScheduledTask }) {
+  const hasError = !!task.lastError;
+  return (
+    <div className={`rounded-lg border px-4 py-3 transition-colors ${hasError ? 'border-[rgba(248,113,113,0.2)] bg-[rgba(248,113,113,0.04)]' : 'border-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.03)]'}`}>
+      <div className="flex items-start justify-between gap-4">
+        {/* Left: name + tags + cron/times */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-semibold text-white font-mono">{task.name}</span>
+            {task.tags.map((tag) => (
+              <span key={tag} className="text-[9px] font-bold tracking-[0.12em] px-1.5 py-0.5 rounded border border-[rgba(0,229,195,0.2)] text-[#00e5c3] bg-[rgba(0,229,195,0.06)] uppercase">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div className="mt-1 flex items-center gap-3 flex-wrap">
+            <span className="text-[11px] font-mono text-[rgba(255,255,255,0.45)]">{task.cron}</span>
+            {task.lastRun && (
+              <span className="text-[11px] font-mono text-[rgba(255,255,255,0.3)]">
+                Last: <span className="text-[rgba(255,255,255,0.5)]">{task.lastRun}</span>
+              </span>
+            )}
+            {task.nextRun && (
+              <span className="text-[11px] font-mono text-[rgba(255,255,255,0.3)]">
+                Next: <span className="text-[rgba(255,255,255,0.5)]">{task.nextRun}</span>
+              </span>
+            )}
+          </div>
+          {hasError && (
+            <p className="mt-1.5 text-[11px] font-mono text-red-400 leading-snug truncate" title={task.lastError}>
+              {task.lastError}
+            </p>
+          )}
+        </div>
+        {/* Right: actions */}
+        <div className="flex items-center gap-1 shrink-0 pt-0.5">
+          <button className="p-1.5 rounded text-[rgba(255,255,255,0.3)] hover:text-amber-400 hover:bg-[rgba(255,255,255,0.05)] transition-colors" title="Pause">
+            <Pause size={12} />
+          </button>
+          <button className="p-1.5 rounded text-[rgba(255,255,255,0.3)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] transition-colors" title="Run now">
+            <Zap size={12} />
+          </button>
+          <button className="p-1.5 rounded text-[rgba(255,255,255,0.3)] hover:text-red-400 hover:bg-[rgba(255,255,255,0.05)] transition-colors" title="Delete">
+            <Trash2 size={12} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TailnetSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -374,25 +425,15 @@ export default function Dashboard() {
             </Fragment>
           ))}
 
-          <motion.section variants={item} className="glass-section space-y-5">
+          <motion.section variants={item} className="glass-section space-y-3">
             <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
-              Endpoints
+              Scheduled Tasks
             </h2>
-            <table className="w-full text-left text-sm">
-              <tbody>
-                {config.endpoints.map((ep, i) => (
-                  <tr key={i} className="border-b border-[rgba(255,255,255,0.05)] last:border-0">
-                    <td className="py-3 pr-4 w-1 whitespace-nowrap">
-                      <span className="text-[10px] px-2 py-1 rounded bg-[rgba(0,229,195,0.08)] text-[#00e5c3] font-bold tracking-wider border border-[rgba(0,229,195,0.15)]">
-                        {ep.type}
-                      </span>
-                    </td>
-                    <td className="py-3 font-semibold text-[rgba(255,255,255,0.7)] tracking-tight">{ep.label}</td>
-                    <td className="py-3 font-mono text-xs text-[rgba(255,255,255,0.35)] text-right">{ep.url}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="space-y-2">
+              {config.scheduledTasks.map((task) => (
+                <ScheduledTaskRow key={task.id} task={task} />
+              ))}
+            </div>
           </motion.section>
 
         </motion.div>

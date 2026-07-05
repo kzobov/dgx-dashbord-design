@@ -31,10 +31,15 @@ export interface TailnetDevice {
   ipv6: string;
 }
 
-export interface Endpoint {
-  type: string;
-  label: string;
-  url: string;
+export interface ScheduledTask {
+  id: string;
+  name: string;
+  tags: string[];
+  cron: string;
+  lastRun?: string;
+  nextRun?: string;
+  lastError?: string;
+  enabled: boolean;
 }
 
 export interface DashboardConfig {
@@ -42,7 +47,7 @@ export interface DashboardConfig {
   system: SystemStats;
   sections: ServiceSection[];
   tailnet: { devices: TailnetDevice[] };
-  endpoints: Endpoint[];
+  scheduledTasks: ScheduledTask[];
 }
 
 export const config: DashboardConfig = {
@@ -96,8 +101,35 @@ export const config: DashboardConfig = {
       { hostname: "edgexpert", status: "connected", os: "Linux", version: "v1.98.8", magicDns: "edgexpert-2a5d.tail23ff8b.ts.net", ipv4: "100.64.0.1", ipv6: "fd7a:115c:a1e0::64:1" },
     ],
   },
-  endpoints: [
-    { type: "MCP", label: "gbrain MCP", url: "edgexpert-2a5d.tail23ff8b.ts.net" },
-    { type: "API", label: "vLLM API (qwen36)", url: "edgexpert-2a5d.tail23ff8b.ts.net" },
+  scheduledTasks: [
+    {
+      id: "morning-digest",
+      name: "morning-digest",
+      tags: ["scheduled", "default", "origin"],
+      cron: "0 7 * * *",
+      lastRun: "7/1/2026, 7:01:11 AM",
+      nextRun: "7/5/2026, 7:00:00 AM",
+      enabled: true,
+    },
+    {
+      id: "hourly-digest",
+      name: "hourly-digest",
+      tags: ["scheduled", "default", "origin"],
+      cron: "0 8-21 * * *",
+      lastRun: "7/4/2026, 9:00:17 PM",
+      nextRun: "7/5/2026, 8:00:00 AM",
+      lastError: "Script exited with code 1 stderr: open /home/kayzeee/Dev/Calendar-Triage-Build/spark-assistant/.env: permission denied",
+      enabled: true,
+    },
+    {
+      id: "news-watch",
+      name: "news-watch",
+      tags: ["scheduled", "default", "origin"],
+      cron: "every 90m",
+      lastRun: "7/4/2026, 8:17:16 PM",
+      nextRun: "7/4/2026, 9:47:16 PM",
+      lastError: "Script exited with code 1 stderr: open /home/kayzeee/Dev/Calendar-Triage-Build/spark-assistant/.env: permission denied",
+      enabled: true,
+    },
   ],
 };
