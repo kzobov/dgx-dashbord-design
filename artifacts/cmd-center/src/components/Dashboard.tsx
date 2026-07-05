@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink } from 'lucide-react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
 import { config, Service, TailnetDevice, SystemStats } from '../config';
@@ -147,6 +147,61 @@ function StatBar({ value, max, label }: { value: number, max: number, label: str
   );
 }
 
+function TailnetSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      el.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll]);
+
+  return (
+    <motion.section variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="glass-section space-y-5">
+      <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
+        Tailnet Devices
+      </h2>
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          data-testid="tailnet-scroll"
+        >
+          {config.tailnet.devices.map((device, idx) => (
+            <div key={`${device.hostname}-${idx}`} className="shrink-0 w-64">
+              <TailnetCard device={device} />
+            </div>
+          ))}
+        </div>
+        {/* Scroll hint — fade + arrow */}
+        <div
+          className="pointer-events-none absolute right-0 top-0 bottom-1 w-20 flex items-center justify-end pr-2 transition-opacity duration-300"
+          style={{
+            opacity: canScrollRight ? 1 : 0,
+            background: 'linear-gradient(to right, transparent, rgba(6,13,20,0.85))',
+          }}
+        >
+          <ChevronRight size={16} className="text-[#00e5c3] animate-pulse" />
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 export default function Dashboard() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -246,16 +301,7 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <motion.section variants={item} className="glass-section space-y-5">
-            <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
-              Tailnet Devices
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {config.tailnet.devices.map((device, idx) => (
-                <TailnetCard key={`${device.hostname}-${idx}`} device={device} />
-              ))}
-            </div>
-          </motion.section>
+          <TailnetSection />
 
           <motion.section variants={item} className="glass-section space-y-5">
             <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">

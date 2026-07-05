@@ -93,6 +93,7 @@ export const config: DashboardConfig = {
       { hostname: "localhost", status: "connected", os: "iOS", version: "v1.98.8", magicDns: "ipad-pro-11-4th-gen-wifi.tail23ff8b.ts.net", ipv4: "100.115.128.40", ipv6: "fd7a:115c:a1e0::38:8029" },
       { hostname: "localhost", status: "connected", os: "iOS", version: "v1.98.5", updateAvailable: true, magicDns: "iphone-15-pro-max.tail23ff8b.ts.net", ipv4: "100.122.8.126", ipv6: "fd7a:115c:a1e0::a838:87e" },
       { hostname: "sk's MacBook Pro", status: "connected", os: "macOS", version: "v1.98.8", magicDns: "macbook-pro.tail23ff8b.ts.net", ipv4: "100.100.100.1", ipv6: "fd7a:115c:a1e0::1:1" },
+      { hostname: "edgexpert", status: "connected", os: "Linux", version: "v1.98.8", magicDns: "edgexpert-2a5d.tail23ff8b.ts.net", ipv4: "100.64.0.1", ipv6: "fd7a:115c:a1e0::64:1" },
     ],
   },
   endpoints: [
