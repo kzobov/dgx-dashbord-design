@@ -190,8 +190,8 @@ export default function Dashboard() {
       <div className="fixed top-0 left-0 right-0 z-50 glass-header">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="text-xl font-bold text-[#00e5c3] tracking-tight drop-shadow-[0_0_8px_rgba(0,229,195,0.5)]">⌘</div>
-            <h1 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '13px', lineHeight: 1, letterSpacing: '0.02em' }} className="text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">Center</h1>
+            <div className="glitch text-xl font-bold text-[#00e5c3] tracking-tight drop-shadow-[0_0_8px_rgba(0,229,195,0.5)]">⌘</div>
+            <h1 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '13px', lineHeight: 1, letterSpacing: '0.02em', animationDelay: '0.15s' }} className="glitch text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">Center</h1>
           </div>
           <div className="flex items-center gap-4">
             <a
