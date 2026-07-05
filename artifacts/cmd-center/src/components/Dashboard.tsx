@@ -273,7 +273,7 @@ export default function Dashboard() {
 
         {/* Footer */}
         <footer className="pt-8 pb-4 text-center">
-          <div className="inline-block px-4 py-2 glass-pill text-[10px] font-mono text-[rgba(255,255,255,0.4)]">
+          <div className="text-[10px] font-mono text-[rgba(255,255,255,0.3)]">
             <span className="text-[#00e5c3] mr-2">●</span> SYSTEM ONLINE // {lastRefreshed.toISOString()}
           </div>
         </footer>
