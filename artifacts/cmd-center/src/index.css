@@ -105,8 +105,7 @@
   }
   body {
     @apply font-sans antialiased text-foreground;
-    background: radial-gradient(ellipse at top left, #0d2137 0%, #091520 40%, #060d14 100%);
-    background-attachment: fixed;
+    background: #060d14;
     min-height: 100vh;
   }
 }

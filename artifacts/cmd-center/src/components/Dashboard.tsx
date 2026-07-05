@@ -124,15 +124,13 @@ function StatBar({ value, max, label }: { value: number, max: number, label: str
   const percent = Math.min(100, Math.max(0, (value / max) * 100));
   
   return (
-    <div className="glass-pill flex items-center justify-between px-4 py-3">
-      <div className="flex flex-col gap-1 w-full">
-        <div className="flex justify-between items-end mb-1">
-          <span className="text-[10px] font-bold tracking-[0.1em] text-[rgba(255,255,255,0.5)] uppercase">{label}</span>
-          <span className="text-[11px] font-mono text-[#00e5c3] font-semibold">{percent.toFixed(1)}%</span>
-        </div>
-        <div className="h-1.5 w-full bg-[rgba(0,0,0,0.3)] rounded-full overflow-hidden border border-[rgba(255,255,255,0.05)]">
-          <div className="h-full bg-gradient-to-r from-[#00e5c3] to-[#00b398] rounded-full shadow-[0_0_10px_rgba(0,229,195,0.4)]" style={{ width: `${percent}%` }}></div>
-        </div>
+    <div className="flex flex-col gap-1 w-full px-1 py-2">
+      <div className="flex justify-between items-end mb-1">
+        <span className="text-[10px] font-bold tracking-[0.1em] text-[rgba(255,255,255,0.35)] uppercase">{label}</span>
+        <span className="text-[11px] font-mono text-[#00e5c3] font-semibold">{percent.toFixed(1)}%</span>
+      </div>
+      <div className="h-px w-full bg-[rgba(255,255,255,0.08)] rounded-full overflow-hidden">
+        <div className="h-full bg-gradient-to-r from-[#00e5c3] to-[#00b398] rounded-full shadow-[0_0_6px_rgba(0,229,195,0.5)]" style={{ width: `${percent}%` }}></div>
       </div>
     </div>
   );
@@ -167,7 +165,16 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen w-full bg-transparent text-foreground font-sans selection:bg-[#00e5c3]/30">
-      
+
+      {/* Ambient gradient blobs */}
+      <div aria-hidden="true" className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '55vw', height: '55vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,130,110,0.18) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+        <div style={{ position: 'absolute', top: '30%', right: '-10%', width: '50vw', height: '50vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(30,60,140,0.22) 0%, transparent 70%)', filter: 'blur(80px)' }} />
+        <div style={{ position: 'absolute', bottom: '10%', left: '20%', width: '40vw', height: '40vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(80,20,120,0.18) 0%, transparent 70%)', filter: 'blur(70px)' }} />
+        <div style={{ position: 'absolute', top: '60%', left: '-8%', width: '35vw', height: '35vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,80,160,0.15) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+        <div style={{ position: 'absolute', bottom: '-5%', right: '5%', width: '45vw', height: '45vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,180,140,0.12) 0%, transparent 70%)', filter: 'blur(80px)' }} />
+      </div>
+
       {/* Header - Fixed & Glass */}
       <div className="fixed top-0 left-0 right-0 z-50 glass-header">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
