@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react';
-import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight, Pause, Zap, Trash2 } from 'lucide-react';
+import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight, Pause, Zap, Trash2, Eye, EyeOff } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
 import { config, Service, TailnetDevice, ScheduledTask } from '../config';
@@ -15,6 +15,14 @@ const statusIconStyles: Record<Service['status'], string> = {
   offline: 'text-red-400 border-[rgba(248,113,113,0.3)] shadow-[0_0_10px_rgba(248,113,113,0.18)]',
   unknown: 'text-slate-400 border-[rgba(148,163,184,0.3)] shadow-[0_0_10px_rgba(148,163,184,0.12)]',
 };
+
+/* Demo mode: replaces every alphanumeric character with a bullet while keeping
+   separators (. : - _ space) so the value still reads as a host/IP shape. */
+const MaskContext = React.createContext(false);
+const useMasked = () => React.useContext(MaskContext);
+function maskHost(value: string): string {
+  return value.replace(/[A-Za-z0-9]/g, '•');
+}
 
 function StatusBadge({ status }: { status: Service['status'] }) {
   if (status === 'healthy') {
@@ -50,6 +58,7 @@ function StatusBadge({ status }: { status: Service['status'] }) {
 }
 
 function ServiceCard({ service }: { service: Service }) {
+  const masked = useMasked();
   const Icon = service.icon && iconMap[service.icon] ? iconMap[service.icon] : Box;
   const address = service.ip && service.port
     ? `${service.ip}:${service.port}`
@@ -65,7 +74,7 @@ function ServiceCard({ service }: { service: Service }) {
           <div>
             <div className="flex items-center gap-1.5">
               <h3 className="text-sm font-semibold text-white tracking-tight leading-tight">{service.name}</h3>
-              {service.url && <ExternalLink size={10} className="text-[rgba(255,255,255,0.3)] shrink-0" />}
+              {service.url && !masked && <ExternalLink size={10} className="text-[rgba(255,255,255,0.3)] shrink-0" />}
             </div>
             {service.port && <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">:{service.port}</span>}
           </div>
@@ -82,7 +91,7 @@ function ServiceCard({ service }: { service: Service }) {
 
   return (
     <div data-status={service.status} className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]">
-      {service.url ? (
+      {service.url && !masked ? (
         <a
           href={service.url}
           target="_blank"
@@ -101,9 +110,9 @@ function ServiceCard({ service }: { service: Service }) {
           onClick={(e) => e.stopPropagation()}
         >
           <span className="text-[11px] font-mono text-[rgba(255,255,255,0.35)] flex-1 truncate" data-testid={`text-ip-${service.id}`}>
-            {address}
+            {masked ? maskHost(address) : address}
           </span>
-          <CopyButton value={address} data-testid={`copy-ip-${service.id}`} />
+          <CopyButton value={masked ? maskHost(address) : address} data-testid={`copy-ip-${service.id}`} />
         </div>
       )}
     </div>
@@ -160,6 +169,11 @@ function AddressRow({ label, value, testId }: { label: string; value: string; te
 
 function TailnetCard({ device }: { device: TailnetDevice }) {
   const isConnected = device.status === 'connected';
+  const masked = useMasked();
+  const hostname = masked ? maskHost(device.hostname) : device.hostname;
+  const magicDns = masked ? maskHost(device.magicDns) : device.magicDns;
+  const ipv4 = masked ? maskHost(device.ipv4) : device.ipv4;
+  const ipv6 = masked ? maskHost(device.ipv6) : device.ipv6;
 
   return (
     <div className="glass-card flex flex-col h-full">
@@ -167,7 +181,7 @@ function TailnetCard({ device }: { device: TailnetDevice }) {
       <div className="flex justify-between items-start p-4 pb-3">
         <div className="flex items-center gap-2 min-w-0">
           <div className={`w-2 h-2 shrink-0 rounded-full ${isConnected ? 'bg-[#00e5c3] shadow-[0_0_8px_rgba(0,229,195,0.6)]' : 'bg-slate-600'}`} />
-          <h4 className="text-sm font-semibold text-white truncate">{device.hostname}</h4>
+          <h4 className="text-sm font-semibold text-white truncate">{hostname}</h4>
         </div>
         <span className="text-[10px] font-mono text-[rgba(255,255,255,0.35)] shrink-0 ml-2">
           {isConnected ? 'Connected' : 'Offline'}
@@ -182,9 +196,9 @@ function TailnetCard({ device }: { device: TailnetDevice }) {
       </div>
       {/* Addresses — each row is fully tappable */}
       <div className="border-t border-[rgba(255,255,255,0.06)] px-1 py-1 flex flex-col gap-0.5 flex-1">
-        <AddressRow label="MAGICDNS" value={device.magicDns} testId={`copy-magicdns-${device.hostname}`} />
-        <AddressRow label="IPV4"     value={device.ipv4}     testId={`copy-ipv4-${device.hostname}`} />
-        <AddressRow label="IPV6"     value={device.ipv6}     testId={`copy-ipv6-${device.hostname}`} />
+        <AddressRow label="MAGICDNS" value={magicDns} testId={`copy-magicdns-${device.hostname}`} />
+        <AddressRow label="IPV4"     value={ipv4}     testId={`copy-ipv4-${device.hostname}`} />
+        <AddressRow label="IPV6"     value={ipv6}     testId={`copy-ipv6-${device.hostname}`} />
       </div>
     </div>
   );
@@ -367,6 +381,7 @@ function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
 
 export default function Dashboard() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
+  const [masked, setMasked] = useState(false);
 
   const handleRefresh = useCallback(() => {
     setLastRefreshed(new Date());
@@ -388,6 +403,7 @@ export default function Dashboard() {
   };
 
   return (
+    <MaskContext.Provider value={masked}>
     <div className="min-h-screen w-full bg-transparent text-foreground font-sans selection:bg-[#00e5c3]/30">
 
       {/* Ambient gradient blobs */}
@@ -429,6 +445,19 @@ export default function Dashboard() {
             >
               <Terminal size={14} />
             </a>
+            <button
+              onClick={() => setMasked((m) => !m)}
+              data-testid="button-mask-hosts"
+              aria-pressed={masked}
+              title={masked ? 'Show hosts' : 'Mask hosts for demo'}
+              className={`p-1.5 rounded-md border transition-all ${
+                masked
+                  ? 'text-[#00e5c3] bg-[rgba(0,229,195,0.1)] border-[rgba(0,229,195,0.35)] shadow-[0_0_8px_rgba(0,229,195,0.2)]'
+                  : 'text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)]'
+              }`}
+            >
+              {masked ? <EyeOff size={14} /> : <Eye size={14} />}
+            </button>
             <CountdownRefresh onRefresh={handleRefresh} />
           </div>
         </div>
@@ -484,5 +513,6 @@ export default function Dashboard() {
         </footer>
       </div>
     </div>
+    </MaskContext.Provider>
   );
 }
