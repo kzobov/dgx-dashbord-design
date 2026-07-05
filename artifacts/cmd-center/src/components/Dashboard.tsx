@@ -333,11 +333,14 @@ function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
   }, []);
 
   useEffect(() => {
+    let count = COUNTDOWN_SECS;
     const id = setInterval(() => {
-      setSecondsLeft(s => {
-        if (s <= 1) { doRefresh(); return COUNTDOWN_SECS; }
-        return s - 1;
-      });
+      count -= 1;
+      if (count <= 0) {
+        count = COUNTDOWN_SECS;
+        doRefresh();
+      }
+      setSecondsLeft(count);
     }, 1000);
     return () => clearInterval(id);
   }, [doRefresh]);
