@@ -44,7 +44,10 @@ function StatusBadge({ status }: { status: Service['status'] }) {
 
 function ServiceCard({ service }: { service: Service }) {
   const Icon = service.icon && iconMap[service.icon] ? iconMap[service.icon] : Box;
-  
+  const address = service.ip && service.port
+    ? `${service.ip}:${service.port}`
+    : service.ip ?? (service.port ? `127.0.0.1:${service.port}` : null);
+
   return (
     <div className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]">
       <div className="flex justify-between items-start mb-3">
@@ -62,6 +65,14 @@ function ServiceCard({ service }: { service: Service }) {
       <p className="text-xs text-[rgba(255,255,255,0.55)] leading-relaxed flex-grow">
         {service.description}
       </p>
+      {address && (
+        <div className="group flex items-center gap-1 mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+          <span className="text-[11px] font-mono text-[rgba(255,255,255,0.35)] flex-1 truncate" data-testid={`text-ip-${service.id}`}>
+            {address}
+          </span>
+          <CopyButton value={address} data-testid={`copy-ip-${service.id}`} />
+        </div>
+      )}
     </div>
   );
 }
