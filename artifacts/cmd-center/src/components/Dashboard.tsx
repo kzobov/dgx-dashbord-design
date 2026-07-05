@@ -320,34 +320,43 @@ function TailnetSection() {
 const COUNTDOWN_SECS = 60;
 
 function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
-  const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECS);
+  const [progress, setProgress] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const onRefreshRef = useRef(onRefresh);
   onRefreshRef.current = onRefresh;
+  const startRef = useRef(performance.now());
 
   const doRefresh = useCallback(() => {
     setSpinning(true);
     onRefreshRef.current();
-    setSecondsLeft(COUNTDOWN_SECS);
+    startRef.current = performance.now();
+    setProgress(0);
     setTimeout(() => setSpinning(false), 700);
   }, []);
 
   useEffect(() => {
-    let count = COUNTDOWN_SECS;
-    const id = setInterval(() => {
-      count -= 1;
-      if (count <= 0) {
-        count = COUNTDOWN_SECS;
-        doRefresh();
+    let raf = 0;
+    const tick = () => {
+      const elapsed = (performance.now() - startRef.current) / 1000;
+      if (elapsed >= COUNTDOWN_SECS) {
+        setSpinning(true);
+        onRefreshRef.current();
+        startRef.current = performance.now();
+        setProgress(0);
+        setTimeout(() => setSpinning(false), 700);
+      } else {
+        setProgress(elapsed / COUNTDOWN_SECS);
       }
-      setSecondsLeft(count);
-    }, 1000);
-    return () => clearInterval(id);
-  }, [doRefresh]);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   const r = 9;
   const circ = 2 * Math.PI * r;
-  const dashoffset = circ * (1 - secondsLeft / COUNTDOWN_SECS);
+  const dashoffset = circ * progress;
+  const secondsLeft = Math.ceil(COUNTDOWN_SECS * (1 - progress));
 
   return (
     <button
@@ -363,12 +372,11 @@ function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
         <circle
           cx="14" cy="14" r={r}
           fill="none"
-          stroke="rgba(0,229,195,0.55)"
+          stroke="rgba(0,229,195,0.7)"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeDasharray={circ}
           strokeDashoffset={dashoffset}
-          style={{ transition: 'stroke-dashoffset 0.95s linear' }}
         />
       </svg>
       <RefreshCw size={11} className={spinning ? 'animate-spin text-[#00e5c3]' : ''} />
