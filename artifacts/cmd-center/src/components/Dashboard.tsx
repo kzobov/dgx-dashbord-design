@@ -9,6 +9,13 @@ const iconMap: Record<string, React.ElementType> = {
   SiJupyter, SiPostgresql
 };
 
+const statusIconStyles: Record<Service['status'], string> = {
+  healthy: 'text-[#00e5c3] border-[rgba(0,229,195,0.25)] shadow-[0_0_10px_rgba(0,229,195,0.15)]',
+  running: 'text-amber-400 border-[rgba(245,158,11,0.25)] shadow-[0_0_10px_rgba(245,158,11,0.15)]',
+  offline: 'text-red-400 border-[rgba(248,113,113,0.3)] shadow-[0_0_10px_rgba(248,113,113,0.18)]',
+  unknown: 'text-slate-400 border-[rgba(148,163,184,0.3)] shadow-[0_0_10px_rgba(148,163,184,0.12)]',
+};
+
 function StatusBadge({ status }: { status: Service['status'] }) {
   if (status === 'healthy') {
     return (
@@ -52,7 +59,7 @@ function ServiceCard({ service }: { service: Service }) {
     <>
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-md text-[#00e5c3] shadow-[0_0_10px_rgba(0,229,195,0.15)]">
+          <div className={`p-2 bg-[rgba(255,255,255,0.05)] border rounded-md ${statusIconStyles[service.status]}`}>
             <Icon size={16} />
           </div>
           <div>
