@@ -320,66 +320,40 @@ function TailnetSection() {
 const COUNTDOWN_SECS = 60;
 
 function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
-  const [progress, setProgress] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECS);
   const [spinning, setSpinning] = useState(false);
   const onRefreshRef = useRef(onRefresh);
   onRefreshRef.current = onRefresh;
-  const startRef = useRef(performance.now());
 
   const doRefresh = useCallback(() => {
     setSpinning(true);
     onRefreshRef.current();
-    startRef.current = performance.now();
-    setProgress(0);
+    setSecondsLeft(COUNTDOWN_SECS);
     setTimeout(() => setSpinning(false), 700);
   }, []);
 
   useEffect(() => {
-    let raf = 0;
-    const tick = () => {
-      const elapsed = (performance.now() - startRef.current) / 1000;
-      if (elapsed >= COUNTDOWN_SECS) {
-        setSpinning(true);
-        onRefreshRef.current();
-        startRef.current = performance.now();
-        setProgress(0);
-        setTimeout(() => setSpinning(false), 700);
-      } else {
-        setProgress(elapsed / COUNTDOWN_SECS);
+    let count = COUNTDOWN_SECS;
+    const id = setInterval(() => {
+      count -= 1;
+      if (count <= 0) {
+        count = COUNTDOWN_SECS;
+        doRefresh();
       }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  const r = 9;
-  const circ = 2 * Math.PI * r;
-  const dashoffset = circ * progress;
-  const secondsLeft = Math.ceil(COUNTDOWN_SECS * (1 - progress));
+      setSecondsLeft(count);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [doRefresh]);
 
   return (
     <button
       onClick={doRefresh}
       data-testid="button-refresh"
-      title={`Auto-refresh in ${secondsLeft}s — click to refresh now`}
-      className="relative flex items-center justify-center w-8 h-8 rounded-md text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] transition-all"
+      title="Click to refresh now"
+      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-mono text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)] transition-all"
     >
-      <svg width="28" height="28" viewBox="0 0 28 28" className="absolute inset-0 -rotate-90 pointer-events-none">
-        {/* Track */}
-        <circle cx="14" cy="14" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
-        {/* Countdown arc */}
-        <circle
-          cx="14" cy="14" r={r}
-          fill="none"
-          stroke="rgba(0,229,195,0.7)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={dashoffset}
-        />
-      </svg>
-      <RefreshCw size={11} className={spinning ? 'animate-spin text-[#00e5c3]' : ''} />
+      <RefreshCw size={14} className={spinning ? 'animate-spin text-[#00e5c3]' : ''} />
+      <span className="tabular-nums w-6 text-right">{secondsLeft}s</span>
     </button>
   );
 }
@@ -425,7 +399,7 @@ export default function Dashboard() {
             <div className="glitch text-xl font-bold text-[#00e5c3] tracking-tight drop-shadow-[0_0_8px_rgba(0,229,195,0.5)]">⌘</div>
             <h1 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: '13px', lineHeight: 1, letterSpacing: '0.02em', animationDelay: '0.15s' }} className="glitch text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]">Center</h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <a
               href="#"
               target="_blank"
