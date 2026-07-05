@@ -99,33 +99,59 @@ function CopyButton({ value, 'data-testid': testId }: { value: string; 'data-tes
   );
 }
 
+function AddressRow({ label, value, testId }: { label: string; value: string; testId?: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [value]);
+  return (
+    <button
+      onClick={handleCopy}
+      data-testid={testId}
+      className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md hover:bg-[rgba(255,255,255,0.06)] active:bg-[rgba(255,255,255,0.1)] transition-colors text-left group"
+      title={`Copy ${value}`}
+    >
+      <span className="font-mono text-[11px] text-[rgba(255,255,255,0.65)] truncate flex-1 min-w-0">{value}</span>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <span className="text-[9px] font-bold tracking-[0.15em] text-[rgba(255,255,255,0.25)] uppercase">{label}</span>
+        <span className="text-[rgba(255,255,255,0.3)] group-hover:text-[#00e5c3] transition-colors">
+          {copied ? <Check size={10} className="text-[#00e5c3]" /> : <Copy size={10} />}
+        </span>
+      </div>
+    </button>
+  );
+}
+
 function TailnetCard({ device }: { device: TailnetDevice }) {
   const isConnected = device.status === 'connected';
 
   return (
-    <div className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)]">
-      <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-[#00e5c3] shadow-[0_0_8px_rgba(0,229,195,0.6)]' : 'bg-slate-600'}`}></div>
-          <h4 className="text-sm font-semibold text-white">{device.hostname}</h4>
+    <div className="glass-card flex flex-col h-full">
+      {/* Header */}
+      <div className="flex justify-between items-start p-4 pb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className={`w-2 h-2 shrink-0 rounded-full ${isConnected ? 'bg-[#00e5c3] shadow-[0_0_8px_rgba(0,229,195,0.6)]' : 'bg-slate-600'}`} />
+          <h4 className="text-sm font-semibold text-white truncate">{device.hostname}</h4>
         </div>
-        <div className="text-[10px] px-2 py-0.5 rounded bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.55)] font-mono">
-          {device.os} {device.version}
-        </div>
+        <span className="text-[10px] font-mono text-[rgba(255,255,255,0.35)] shrink-0 ml-2">
+          {isConnected ? 'Connected' : 'Offline'}
+        </span>
       </div>
-      <div className="text-[11px] font-mono text-[rgba(255,255,255,0.45)] space-y-1.5 mt-1">
-        <div className="group flex items-center gap-1 min-w-0">
-          <span className="truncate text-[rgba(255,255,255,0.6)]">{device.magicDns}</span>
-          <CopyButton value={device.magicDns} data-testid={`copy-magicdns-${device.hostname}`} />
-        </div>
-        <div className="group flex items-center gap-1">
-          <span className="text-[rgba(255,255,255,0.55)]">{device.ipv4}</span>
-          <CopyButton value={device.ipv4} data-testid={`copy-ipv4-${device.hostname}`} />
-        </div>
-        <div className="group flex items-center gap-1 min-w-0">
-          <span className="truncate text-[rgba(255,255,255,0.35)]">{device.ipv6}</span>
-          <CopyButton value={device.ipv6} data-testid={`copy-ipv6-${device.hostname}`} />
-        </div>
+      {/* OS badge */}
+      <div className="px-4 pb-3">
+        <span className="text-[10px] font-mono text-[rgba(255,255,255,0.4)]">{device.os} · {device.version}</span>
+        {device.updateAvailable && (
+          <span className="ml-2 text-[9px] font-bold text-amber-400 tracking-wide">UPDATE</span>
+        )}
+      </div>
+      {/* Addresses — each row is fully tappable */}
+      <div className="border-t border-[rgba(255,255,255,0.06)] px-1 py-1 flex flex-col gap-0.5 flex-1">
+        <AddressRow label="MAGICDNS" value={device.magicDns} testId={`copy-magicdns-${device.hostname}`} />
+        <AddressRow label="IPV4"     value={device.ipv4}     testId={`copy-ipv4-${device.hostname}`} />
+        <AddressRow label="IPV6"     value={device.ipv6}     testId={`copy-ipv6-${device.hostname}`} />
       </div>
     </div>
   );
@@ -177,7 +203,7 @@ function TailnetSection() {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-1"
+          className="flex items-stretch gap-4 overflow-x-auto pb-1"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           data-testid="tailnet-scroll"
         >
