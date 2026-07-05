@@ -371,7 +371,7 @@ export default function Dashboard() {
               data-testid="link-dgx-dashboard"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)] transition-all"
             >
-              DGX Dashboard
+              <span className="hidden sm:inline">DGX Dashboard</span>
               <ExternalLink size={11} />
             </a>
             <a
