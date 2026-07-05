@@ -73,7 +73,7 @@ export const config: DashboardConfig = {
         { id: "jupyterlab", name: "JupyterLab", description: "Notebooks · CUDA · :8888 · token: run scripts/jupyter-url.sh", status: "healthy", icon: "BookOpen", port: 8888, ip: "127.0.0.1" },
         { id: "calendar-dash", name: "Calendar Dashboard", description: "Calendar / family triage dashboard · :8078", status: "running", icon: "Calendar", port: 8078, ip: "127.0.0.1" },
         { id: "web-terminal", name: "Web Terminal", description: "In-browser shell (Open WebUI panel backend)", status: "healthy", icon: "Terminal", ip: "127.0.0.1" },
-        { id: "hermes-dash", name: "Hermes Dashboard", description: "Agent config UI · :9119 (via host-rewrite proxy)", status: "healthy", icon: "Bot", port: 9119, ip: "127.0.0.1" },
+        { id: "hermes-dash", name: "Hermes Dashboard", description: "Agent config UI · :9119 (via host-rewrite proxy)", status: "offline", icon: "Bot", port: 9119, ip: "127.0.0.1" },
       ],
     },
     {
