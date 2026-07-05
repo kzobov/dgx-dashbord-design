@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, Fragment } from 'react';
 import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink, ChevronRight } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
@@ -324,9 +324,9 @@ export default function Dashboard() {
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
           
           {/* Main Services Column */}
-          <div className="grid grid-cols-1 gap-10">
-            {config.sections.map((section) => (
-              <motion.section key={section.title} variants={item} className="glass-section space-y-5">
+          {config.sections.map((section, idx) => (
+            <Fragment key={section.title}>
+              <motion.section variants={item} className="glass-section space-y-5">
                 <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
                   {section.title}
                 </h2>
@@ -336,10 +336,9 @@ export default function Dashboard() {
                   ))}
                 </div>
               </motion.section>
-            ))}
-          </div>
-
-          <TailnetSection />
+              {idx === 0 && <TailnetSection />}
+            </Fragment>
+          ))}
 
           <motion.section variants={item} className="glass-section space-y-5">
             <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
