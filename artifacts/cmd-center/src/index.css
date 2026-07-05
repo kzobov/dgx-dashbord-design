@@ -177,22 +177,35 @@
   }
 }
 
-/* Mobile status border — outside @layer so it always wins */
+/* Status outlines — outside @layer so they always beat the glass-card border shorthand.
+   Attention states (offline/unknown) are outlined on ALL screens so desktop cards
+   signal failure alongside the badge. */
+.glass-card[data-status="offline"] {
+  border-color: rgba(248, 113, 113, 0.55);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 12px rgba(248, 113, 113, 0.18);
+}
+.glass-card[data-status="unknown"] {
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+/* Mobile: badges are hidden, so every status colors its border, and the card
+   background is tinted to reinforce the status at a glance. */
 @media (max-width: 639px) {
   .glass-card[data-status="healthy"] {
     border-color: rgba(0, 229, 195, 0.5);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 12px rgba(0, 229, 195, 0.15);
+    background: rgba(0, 229, 195, 0.06);
   }
   .glass-card[data-status="running"] {
     border-color: rgba(245, 158, 11, 0.5);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 12px rgba(245, 158, 11, 0.15);
+    background: rgba(245, 158, 11, 0.06);
   }
   .glass-card[data-status="offline"] {
-    border-color: rgba(248, 113, 113, 0.5);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 12px rgba(248, 113, 113, 0.15);
+    background: rgba(248, 113, 113, 0.08);
   }
   .glass-card[data-status="unknown"] {
-    border-color: rgba(148, 163, 184, 0.35);
+    background: rgba(148, 163, 184, 0.07);
   }
   /* Sections go flat on mobile — headline + grid sit on the page background */
   .glass-section {
