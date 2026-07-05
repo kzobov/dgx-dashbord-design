@@ -176,10 +176,12 @@ function StatBar({ value, max, label }: { value: number, max: number, label: str
 function TailnetSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
   }, []);
 
@@ -213,7 +215,17 @@ function TailnetSection() {
             </div>
           ))}
         </div>
-        {/* Scroll hint — fade + arrow */}
+        {/* Left scroll hint */}
+        <div
+          className="pointer-events-none absolute left-0 top-0 bottom-1 w-20 flex items-center justify-start pl-2 transition-opacity duration-300"
+          style={{
+            opacity: canScrollLeft ? 1 : 0,
+            background: 'linear-gradient(to left, transparent, rgba(6,13,20,0.85))',
+          }}
+        >
+          <ChevronRight size={16} className="text-[#00e5c3] animate-pulse rotate-180" />
+        </div>
+        {/* Right scroll hint */}
         <div
           className="pointer-events-none absolute right-0 top-0 bottom-1 w-20 flex items-center justify-end pr-2 transition-opacity duration-300"
           style={{
