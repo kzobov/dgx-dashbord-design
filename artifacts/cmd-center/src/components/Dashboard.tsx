@@ -321,6 +321,16 @@ export default function Dashboard() {
               DGX Dashboard
               <ExternalLink size={11} />
             </a>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="link-terminal"
+              className="p-1.5 text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)] rounded-md transition-all"
+              title="Terminal"
+            >
+              <Terminal size={14} />
+            </a>
             <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">
               {lastRefreshed.toLocaleTimeString([], { hour12: false })}
             </span>
