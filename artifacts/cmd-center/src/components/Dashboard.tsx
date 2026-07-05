@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check } from 'lucide-react';
+import { RefreshCw, Monitor, Cpu, Search, Box, BookOpen, Calendar, Terminal, Bot, Brain, Plug, Database, CalendarClock, FileText, LayoutDashboard, Copy, Check, ExternalLink } from 'lucide-react';
 import { SiJupyter, SiPostgresql } from 'react-icons/si';
 import { motion } from 'framer-motion';
 import { config, Service, TailnetDevice, SystemStats } from '../config';
@@ -183,6 +183,16 @@ export default function Dashboard() {
             <h1 className="text-xl font-semibold tracking-tight text-white drop-shadow-md">Center</h1>
           </div>
           <div className="flex items-center gap-4">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="link-dgx-dashboard"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(0,229,195,0.3)] transition-all"
+            >
+              DGX Dashboard
+              <ExternalLink size={11} />
+            </a>
             <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">
               {lastRefreshed.toLocaleTimeString([], { hour12: false })}
             </span>
