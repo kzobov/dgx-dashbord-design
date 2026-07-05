@@ -194,4 +194,13 @@
   .glass-card[data-status="unknown"] {
     border-color: rgba(148, 163, 184, 0.35);
   }
+  /* Sections go flat on mobile — headline + grid sit on the page background */
+  .glass-section {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
 }
