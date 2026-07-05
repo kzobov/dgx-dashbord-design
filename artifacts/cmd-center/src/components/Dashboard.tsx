@@ -427,10 +427,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6 pt-28 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 pb-6 pt-[86px] space-y-6">
         
         {/* System Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatBar value={config.system.cpu.usage} max={100} label="CPU USAGE" />
           <StatBar value={config.system.ram.total - config.system.ram.free} max={config.system.ram.total} label={`RAM (${config.system.ram.free} ${config.system.ram.unit} FREE)`} />
           <StatBar value={config.system.disk.total - config.system.disk.free} max={config.system.disk.total} label={`DISK (${config.system.disk.free} ${config.system.disk.unit} FREE)`} />
