@@ -56,14 +56,14 @@ function ServiceCard({ service }: { service: Service }) {
             <Icon size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white tracking-tight leading-tight">{service.name}</h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold text-white tracking-tight leading-tight">{service.name}</h3>
+              {service.url && <ExternalLink size={10} className="text-[rgba(255,255,255,0.3)] shrink-0" />}
+            </div>
             {service.port && <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">:{service.port}</span>}
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <StatusBadge status={service.status} />
-          {service.url && <ExternalLink size={11} className="text-[rgba(255,255,255,0.25)]" />}
-        </div>
+        <StatusBadge status={service.status} />
       </div>
       <p className="text-xs text-[rgba(255,255,255,0.55)] leading-relaxed flex-grow">
         {service.description}
