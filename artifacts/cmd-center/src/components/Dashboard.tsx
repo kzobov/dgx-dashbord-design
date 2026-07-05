@@ -73,15 +73,8 @@ function ServiceCard({ service }: { service: Service }) {
     </>
   );
 
-  const mobileBorder = {
-    healthy: 'max-sm:border-[rgba(0,229,195,0.45)] max-sm:shadow-[0_0_10px_rgba(0,229,195,0.12)]',
-    running: 'max-sm:border-[rgba(245,158,11,0.45)] max-sm:shadow-[0_0_10px_rgba(245,158,11,0.12)]',
-    offline: 'max-sm:border-[rgba(248,113,113,0.45)] max-sm:shadow-[0_0_10px_rgba(248,113,113,0.12)]',
-    unknown: 'max-sm:border-[rgba(148,163,184,0.35)]',
-  }[service.status] ?? '';
-
   return (
-    <div className={`glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)] ${mobileBorder}`}>
+    <div data-status={service.status} className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]">
       {service.url ? (
         <a
           href={service.url}
