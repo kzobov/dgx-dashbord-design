@@ -48,25 +48,49 @@ function ServiceCard({ service }: { service: Service }) {
     ? `${service.ip}:${service.port}`
     : service.ip ?? (service.port ? `127.0.0.1:${service.port}` : null);
 
-  return (
-    <div className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]">
+  const cardInner = (
+    <>
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-md text-[#00e5c3] shadow-[0_0_10px_rgba(0,229,195,0.15)]">
             <Icon size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white tracking-tight">{service.name}</h3>
+            <h3 className="text-sm font-semibold text-white tracking-tight leading-tight">{service.name}</h3>
             {service.port && <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">:{service.port}</span>}
           </div>
         </div>
-        <StatusBadge status={service.status} />
+        <div className="flex items-center gap-1.5">
+          <StatusBadge status={service.status} />
+          {service.url && <ExternalLink size={11} className="text-[rgba(255,255,255,0.25)]" />}
+        </div>
       </div>
       <p className="text-xs text-[rgba(255,255,255,0.55)] leading-relaxed flex-grow">
         {service.description}
       </p>
+    </>
+  );
+
+  return (
+    <div className="glass-card flex flex-col p-4 transition-all duration-300 hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.2)]">
+      {service.url ? (
+        <a
+          href={service.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col flex-grow outline-none"
+          data-testid={`link-${service.id}`}
+        >
+          {cardInner}
+        </a>
+      ) : (
+        <div className="flex flex-col flex-grow">{cardInner}</div>
+      )}
       {address && (
-        <div className="group flex items-center gap-1 mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+        <div
+          className="group flex items-center gap-1 mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]"
+          onClick={(e) => e.stopPropagation()}
+        >
           <span className="text-[11px] font-mono text-[rgba(255,255,255,0.35)] flex-1 truncate" data-testid={`text-ip-${service.id}`}>
             {address}
           </span>

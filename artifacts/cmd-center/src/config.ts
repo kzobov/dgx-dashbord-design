@@ -56,7 +56,7 @@ export const config: DashboardConfig = {
     {
       title: "AI & Inference",
       services: [
-        { id: "openwebui", name: "OpenWebUI", description: "Chat UI → qwen36-35b · port :3000", status: "healthy", icon: "Monitor", port: 3000, ip: "127.0.0.1" },
+        { id: "openwebui", name: "OpenWebUI", description: "Chat UI → qwen36-35b · port :3000", status: "healthy", icon: "Monitor", port: 3000, ip: "127.0.0.1", url: "http://localhost:3000" },
         { id: "vllm", name: "vLLM · qwen36", description: "Daily driver · Qwen3.6-35B-A3B-NVFP4 · :8000 · 256k · MTP", status: "healthy", icon: "Cpu", port: 8000, ip: "127.0.0.1" },
         { id: "fastcontext", name: "FastContext", description: "Repo-exploration subagent · 4B · :8002", status: "healthy", icon: "Search", port: 8002, ip: "127.0.0.1" },
         { id: "ollama", name: "Ollama", description: "Embeddings (embeddinggemma) · :11434", status: "healthy", icon: "Box", port: 11434, ip: "127.0.0.1" },
