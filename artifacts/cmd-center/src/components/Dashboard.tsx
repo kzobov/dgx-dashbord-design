@@ -317,17 +317,68 @@ function TailnetSection() {
   );
 }
 
+const COUNTDOWN_SECS = 60;
+
+function CountdownRefresh({ onRefresh }: { onRefresh: () => void }) {
+  const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECS);
+  const [spinning, setSpinning] = useState(false);
+  const onRefreshRef = useRef(onRefresh);
+  onRefreshRef.current = onRefresh;
+
+  const doRefresh = useCallback(() => {
+    setSpinning(true);
+    onRefreshRef.current();
+    setSecondsLeft(COUNTDOWN_SECS);
+    setTimeout(() => setSpinning(false), 700);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSecondsLeft(s => {
+        if (s <= 1) { doRefresh(); return COUNTDOWN_SECS; }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [doRefresh]);
+
+  const r = 9;
+  const circ = 2 * Math.PI * r;
+  const dashoffset = circ * (1 - secondsLeft / COUNTDOWN_SECS);
+
+  return (
+    <button
+      onClick={doRefresh}
+      data-testid="button-refresh"
+      title={`Auto-refresh in ${secondsLeft}s — click to refresh now`}
+      className="relative flex items-center justify-center w-8 h-8 rounded-md text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] transition-all"
+    >
+      <svg width="28" height="28" viewBox="0 0 28 28" className="absolute inset-0 -rotate-90 pointer-events-none">
+        {/* Track */}
+        <circle cx="14" cy="14" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
+        {/* Countdown arc */}
+        <circle
+          cx="14" cy="14" r={r}
+          fill="none"
+          stroke="rgba(0,229,195,0.55)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={dashoffset}
+          style={{ transition: 'stroke-dashoffset 0.95s linear' }}
+        />
+      </svg>
+      <RefreshCw size={11} className={spinning ? 'animate-spin text-[#00e5c3]' : ''} />
+    </button>
+  );
+}
+
 export default function Dashboard() {
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setLastRefreshed(new Date());
-      setIsRefreshing(false);
-    }, 500);
-  };
+  const handleRefresh = useCallback(() => {
+    setLastRefreshed(new Date());
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -386,16 +437,7 @@ export default function Dashboard() {
             >
               <Terminal size={14} />
             </a>
-            <span className="text-xs font-mono text-[rgba(255,255,255,0.55)]">
-              {lastRefreshed.toLocaleTimeString([], { hour12: false })}
-            </span>
-            <button 
-              onClick={handleRefresh}
-              className="p-1.5 text-[rgba(255,255,255,0.55)] hover:text-[#00e5c3] hover:bg-[rgba(255,255,255,0.05)] rounded-md transition-all"
-              data-testid="button-refresh"
-            >
-              <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
-            </button>
+            <CountdownRefresh onRefresh={handleRefresh} />
           </div>
         </div>
       </div>
