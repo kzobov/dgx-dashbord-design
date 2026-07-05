@@ -345,23 +345,21 @@ export default function Dashboard() {
             <h2 className="text-xs font-bold tracking-[0.2em] text-[rgba(255,255,255,0.35)] uppercase border-b border-[rgba(255,255,255,0.08)] pb-3">
               Endpoints
             </h2>
-            <div className="glass-card overflow-hidden">
-              <table className="w-full text-left text-sm">
-                <tbody>
-                  {config.endpoints.map((ep, i) => (
-                    <tr key={i} className="border-b border-[rgba(255,255,255,0.05)] last:border-0 hover:bg-[rgba(255,255,255,0.03)] transition-colors">
-                      <td className="p-4 w-1 whitespace-nowrap">
-                        <span className="text-[10px] px-2 py-1 rounded bg-[rgba(0,229,195,0.1)] text-[#00e5c3] font-bold tracking-wider border border-[rgba(0,229,195,0.2)] shadow-[0_0_5px_rgba(0,229,195,0.15)] backdrop-blur-md">
-                          {ep.type}
-                        </span>
-                      </td>
-                      <td className="p-4 font-semibold text-white tracking-tight">{ep.label}</td>
-                      <td className="p-4 font-mono text-xs text-[rgba(255,255,255,0.55)] text-right">{ep.url}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <table className="w-full text-left text-sm">
+              <tbody>
+                {config.endpoints.map((ep, i) => (
+                  <tr key={i} className="border-b border-[rgba(255,255,255,0.05)] last:border-0">
+                    <td className="py-3 pr-4 w-1 whitespace-nowrap">
+                      <span className="text-[10px] px-2 py-1 rounded bg-[rgba(0,229,195,0.08)] text-[#00e5c3] font-bold tracking-wider border border-[rgba(0,229,195,0.15)]">
+                        {ep.type}
+                      </span>
+                    </td>
+                    <td className="py-3 font-semibold text-[rgba(255,255,255,0.7)] tracking-tight">{ep.label}</td>
+                    <td className="py-3 font-mono text-xs text-[rgba(255,255,255,0.35)] text-right">{ep.url}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </motion.section>
 
         </motion.div>
